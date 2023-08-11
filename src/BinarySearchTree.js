@@ -1,3 +1,5 @@
+const Queue = require('./Queue');
+
 class BinarySearchTree {
   //the constructor represents a single node in the tree.
   //you can optionally pass in a key, value and a pointer to the parent node
@@ -10,6 +12,7 @@ class BinarySearchTree {
     this.left = null;
     this.right = null;
   }
+
   insert (key, value) {
     // If the tree is empty, then this key being inserted is the root node of the tree.
     if (this.key == null) {
@@ -74,15 +77,15 @@ class BinarySearchTree {
         this.value = successor.value;
         successor.remove(successor.key);
       } else if (this.left) {
-      /* If the node only has a left child,
+        /* If the node only has a left child,
                then you replace the node with its left child. */
         this._replaceWith(this.left);
       } else if (this.right) {
-      /* And similarly, if the node only has a right child,
+        /* And similarly, if the node only has a right child,
                then you replace it with its right child. */
         this._replaceWith(this.right);
       } else {
-      /* If the node has no children, then
+        /* If the node has no children, then
                simply remove it and any references to it
                by calling `this._replaceWith(null)`. */
         this._replaceWith(null);
@@ -95,6 +98,7 @@ class BinarySearchTree {
       throw new Error('Key Not Found');
     }
   }
+
   _replaceWith (node) {
     //if the node has a parent
     if (this.parent) {
@@ -140,5 +144,75 @@ class BinarySearchTree {
     }
     //otherwise recursively find the minimum in the left subtree
     return this.left._findMin();
+  }
+
+  dfsInOrder (values = []) {
+    // First, process the left node recursively
+    if (this.left) {
+      values = this.left.dfsInOrder(values);
+    }
+
+    // Next, process the current node
+    values.push(this.value);
+
+    // Finally, process the right node recursively
+    if (this.right) {
+      values = this.right.dfsInOrder(values);
+    }
+
+    return values;
+  }
+
+  dfsPreOrder (values = []) {
+    // First, process the current node
+    values.push(this.value);
+
+    // Next, process the left node recursively
+    if (this.left) {
+      values = this.left.dfsPreOrder(values);
+    }
+
+    // Finally, process the right node recursively
+    if (this.right) {
+      values = this.right.dfsPreOrder(values);
+    }
+
+    return values;
+  }
+
+  dfsPostOrder (values = []) {
+    // First, process the left node recursively
+    if (this.left) {
+      values = this.left.dfsPostOrder(values);
+    }
+
+    // Next, process the right node recursively
+    if (this.right) {
+      values = this.right.dfsPostOrder(values);
+    }
+
+    // Finally, process the current node
+    values.push(this.value);
+
+    return values;
+  }
+
+  bfs (tree, values = []) {
+    const queue = new Queue();
+    queue.enqueue(tree);
+    let node = queue.dequeue();
+    while (node) {
+      values.push(node.value);
+
+      if (node.left) {
+        queue.enqueue(node.left);
+      }
+
+      if (node.right) {
+        queue.enqueue(node.right);
+      }
+      node = queue.dequeue();
+    }
+    return values;
   }
 }
